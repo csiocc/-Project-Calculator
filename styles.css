@@ -1,0 +1,29 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width:450px;
+    height:975px;
+}
+
+output {
+    border-style: solid;
+    height: 5%;
+    font-size: 35px;
+    text-align: center;
+    margin: 5%;
+    border-radius: 10px;
+}
+
+.button {
+    box-sizing: border-box;
+    width: 23%;
+    height:auto;
+    margin: 2px;
+}
+
+.buttonzero {
+    box-sizing: border-box;
+    width: 48%;
+    height:auto;
+}
+
