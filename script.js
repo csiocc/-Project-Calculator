@@ -82,15 +82,3 @@ function getNoTwo(inputArray) {         // Get second Number
 
 
 
-// const buttons = Array.from(buttonsList)
-
-
-
-
-
-// console.log(result(no1, no2, op))  
-// 
-
-  //      const opIndex = inputArray.findIndex((el) => typeof el === "string" && ["+", "-", "*", "/"].includes(el));
-  //      console.log("Erster Operator an Index:", opIndex);
-  //  });
