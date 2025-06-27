@@ -21,9 +21,21 @@ output {
     margin: 2px;
 }
 
-.buttonzero {
+.resultbutton {
     box-sizing: border-box;
     width: 48%;
     height:auto;
+}
+
+.resetbutton {
+    box-sizing: border-box;
+    width: 23%;
+    height:auto;
+    margin: 2px;
+    
+}
+
+#dot {
+    font-weight: 900;
 }
 

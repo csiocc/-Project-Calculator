@@ -1,84 +1,173 @@
+// Global Variables
 
-
-let inputArray = []
+let inputArray = [];
 let opIndex = 0;
 
-// expression
-function result(no1, no2, op) {
-    if (op === "+") return add(no1, no2);
-    if (op === "-") return subtract(no1, no2);
-    if (op === "*") return multiply(no1, no2);
-    if (op === "/") return divide(no1, no2)
-}
-
-// operators
-function add(no1, no2) {
-    return (no1 + no2);
-}
-
-function subtract(no1, no2) {
-    return (no1 - b)
-}
-
-function multiply(no1, no2) {
-    return (no1 * no2)
-}
-
-function divide(no1, no2) {
-    return (no1 / no2)
-}
-
-//button listener
+// Global Constants
+const resultbutton  = document.querySelector(".resultbutton");
+const resetbutton  = document.querySelector(".resetbutton");
 const buttonsList = document.querySelectorAll(".button")
-buttonsList.forEach((button) => {
+
+
+buttonsList.forEach((button) => {                                                   //button listener for all buttons except reset and result
     button.addEventListener("click", (event) => {
         const input = event.target.value;
-        //check for Number
-        if(!isNaN(input)){
+        
+        if(!isNaN(input)){                                                          //check for Number
             inputArray.push(Number(input));
         } else {
             inputArray.push(input);
-        }
-        
+        } 
         document.querySelector(".output").innerText = inputArray.join("")
         opIndex = inputArray.indexOf(6)
     })
 });
 
-function getNoOne(inputArray) {     // Get first Numbers
-    const noOne = [];
+resetbutton.addEventListener("click", () => {                                       // Wipe all
+    inputArray.length = 0;
+    document.querySelector(".output").innerText = inputArray.join("")
+
+})
+
+
+
+
+function fixNumbers(inputArray) {
+    const result = [];
+    let numberBuffer = [];
+
+    for (let item of inputArray) {
+        if (typeof item === "number" || item === ".") {
+            numberBuffer.push(item);
+        } else if (typeof item === "string") {
+            if (numberBuffer.length > 0) {
+                const joined = numberBuffer.join("");
+                const parsed = parseFloat(joined);                                  // 💡 parseFloat for non integers
+                if (isNaN(parsed)) {
+                    throw new Error("ERROR");
+                }
+                result.push(parsed);
+                numberBuffer = [];
+            }
+            result.push(item);                                                      // Operator
+        }
+    }
 
     
-    while (typeof inputArray[0] === "number") {
-        noOne.push(inputArray.shift());
+    if (numberBuffer.length > 0) {                                                  // Letzte Zahl anhängen
+        const joined = numberBuffer.join("");
+        const parsed = parseFloat(joined);
+        if (isNaN(parsed)) {
+            throw new Error("ERROR");
+        }
+        result.push(parsed);
     }
 
-    console.log("noOne:", noOne);
-    getOp(inputArray);
-    return noOne;
-}
-
-function getOp(inputArray) {           // Get Operator
-    const op = [];
-
-    
-    if (typeof inputArray[0] !== "number") {
-        op.push(inputArray.shift());
-        console.log("op:", op);
-        getNoTwo(inputArray);
-    }
-}
-
-function getNoTwo(inputArray) {         // Get second Number
-    const noTwo = [];  
-
-    while (typeof inputArray[0] === "number") {
-        noTwo.push(inputArray.shift());
-    }
-
-    console.log("noTwo:", noTwo);
-
+    return result;
 }
 
 
+
+
+function calculate(inputArray) {                                                    // Clc
+    try {
+        const fixedNumbers = fixNumbers(inputArray);                                // Numbers to fixed Numbers 5 5 -> 55
+
+        const firstPass = [];
+
+        let i = 0;
+        while (i < fixedNumbers.length) {
+            const current = fixedNumbers[i];
+
+            if (typeof current === "number") {
+                firstPass.push(current);
+                i++;
+            } 
+            else if (current === "%") {
+                const left = firstPass.pop();
+                const right = fixedNumbers[i + 1];
+
+                if (typeof left !== "number") {
+                    throw new Error("ERROR%");
+                }
+
+                if (typeof right === "number") {
+                    firstPass.push((left / 100) * right);                           // If 2 Numbers get % equal second Number from the First
+                    i += 2;
+                } else {                       
+                    firstPass.push(left / 100);
+                    i += 1;
+                }
+            }
+            else if (current === "pi") {
+                const left = firstPass.pop()
+                const pi = 3.1415;
+                firstPass.push(left * pi)
+                i += 1;
+            }
+            else if (current === "*" || current === "/") {
+                const left = firstPass.pop();
+                const right = fixedNumbers[i + 1];
+            
+                
+            if (typeof left !== "number" || typeof right !== "number") {            // Error check
+                throw new Error("ERROR");
+            }
+
+                const result = current === "*" ? left * right : left / right;       // Muli and Div
+                firstPass.push(result);
+                i += 2;
+            } else if (current === "+" || current === "-") {
+                firstPass.push(current);
+                i++;
+            } else {
+                throw new Error("ERROR");
+            }
+        
+        }
+        
+        for (let j = 0; j < firstPass.length; j += 2) {                                // Valid Form check
+            if (typeof firstPass[j] !== "number") {
+                throw new Error("ERROR");
+            }
+        }
+
+        let result = firstPass[0];
+        for (let j = 1; j < firstPass.length; j += 2) {
+            const op = firstPass[j];
+            const next = firstPass[j + 1];
+
+            if (typeof next !== "number") {
+                throw new Error("ERROR");
+            }
+
+            if (op === "+") result += next;
+            else if (op === "-") result -= next;
+            else throw new Error("ERROR");
+        }
+
+        return result;
+
+    } catch (err) {
+        console.error("Error:", err.message);
+        return "ERROR";
+    }
+}
+
+
+
+resultbutton.addEventListener("click", () => {                                                 // Result
+        
+        const outputResult = calculate(inputArray);
+
+        if (outputResult === "ERROR") {
+            document.querySelector(".output").innerText = "ERROR";
+            } else {
+            const format = Number.isInteger(outputResult) 
+            ? outputResult.toString()                                                           // If Integer 
+            : outputResult.toFixed(4);                                                          // If non Integer
+            document.querySelector(".output").innerText = format;
+        }
+});                                                        
+   
 
