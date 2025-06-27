@@ -1,35 +1,14 @@
+// Global Variables
 
-
-let inputArray = []
+let inputArray = [];
 let opIndex = 0;
 
-// expression
-function result(no1, no2, op) {
-    if (op === "+") return add(no1, no2);
-    if (op === "-") return subtract(no1, no2);
-    if (op === "*") return multiply(no1, no2);
-    if (op === "/") return divide(no1, no2)
-}
-
-// operators
-function add(no1, no2) {
-    return (no1 + no2);
-}
-
-function subtract(no1, no2) {
-    return (no1 - b)
-}
-
-function multiply(no1, no2) {
-    return (no1 * no2)
-}
-
-function divide(no1, no2) {
-    return (no1 / no2)
-}
-
-//button listener
+// Global Constants
+const resultbutton  = document.querySelector(".resultbutton");
+const resetbutton  = document.querySelector(".resetbutton");
 const buttonsList = document.querySelectorAll(".button")
+
+//button listener for all buttons except reset and result
 buttonsList.forEach((button) => {
     button.addEventListener("click", (event) => {
         const input = event.target.value;
@@ -38,59 +17,103 @@ buttonsList.forEach((button) => {
             inputArray.push(Number(input));
         } else {
             inputArray.push(input);
-        }
+        } 
         
         document.querySelector(".output").innerText = inputArray.join("")
         opIndex = inputArray.indexOf(6)
     })
 });
 
-function getNoOne(inputArray) {     // Get first Numbers
-    const noOne = [];
+resultbutton.addEventListener("click", () => {  // Start Calc
+        console.log("Result clicked")
+        calculate(inputArray)
 
+    });
+
+
+resetbutton.addEventListener("click", () => {         // Wipe all
+    inputArray.length = 0;
+
+    const outputtoreset = document.querySelector(".output");
+    outputtoreset.textContent = "";
+})
+
+
+function fixNumbers(inputArray) {           // Fixing Numbers 5 5 5 to 555
+    const result = [];
+    let numberBuffer = [];
+
+    for (let item of inputArray) {
+        if (typeof item === "number") {
+            numberBuffer.push(item);
+        } else if (typeof item === "string") {
+            if (numberBuffer.length > 0) {
+                const number = parseInt(numberBuffer.join(""), 10);
+                result.push(number);
+                numberBuffer = [];
+            }
+            result.push(item); // add Operator
+        }
+    }
+
+    // Push last Number
+    if (numberBuffer.length > 0) {
+        const number = parseInt(numberBuffer.join(""), 10);
+        result.push(number);
+    }
     
-    while (typeof inputArray[0] === "number") {
-        noOne.push(inputArray.shift());
-    }
-
-    console.log("noOne:", noOne);
-    getOp(inputArray);
-    return noOne;
-}
-
-function getOp(inputArray) {           // Get Operator
-    const op = [];
-
-    
-    if (typeof inputArray[0] !== "number") {
-        op.push(inputArray.shift());
-        console.log("op:", op);
-        getNoTwo(inputArray);
-    }
-}
-
-function getNoTwo(inputArray) {         // Get second Number
-    const noTwo = [];  
-
-    while (typeof inputArray[0] === "number") {
-        noTwo.push(inputArray.shift());
-    }
-
-    console.log("noTwo:", noTwo);
-
+    return result;
 }
 
 
 
-// const buttons = Array.from(buttonsList)
+
+function calculate(inputArray) {
+    const fixedNumbers = fixNumbers(inputArray); // ← Ziffern zu Zahlen zusammensetzen
+
+    const firstPass = [];
+
+    let i = 0;
+    while (i < fixedNumbers.length) {
+        const current = fixedNumbers[i];
+
+        if (typeof current === "number") {
+            firstPass.push(current);
+            i++;
+        } else if (current === "*" || current === "/") {
+            const left = firstPass.pop();
+            const right = fixedNumbers[i + 1];
+
+            if (typeof right !== "number") {
+                throw new Error("ERROR: Operator ohne rechte Zahl.");
+            }
+
+            const result = current === "*" ? left * right : left / right;
+            firstPass.push(result);
+            i += 2;
+        } else {
+            firstPass.push(current);
+            i++;
+        }
+    }
+
+    let result = firstPass[0];
+    for (let j = 1; j < firstPass.length; j += 2) {
+        const op = firstPass[j];
+        const next = firstPass[j + 1];
+
+        if (op === "+") result += next;
+        else if (op === "-") result -= next;
+    }
+
+    console.log("Ergebnis:", result);
+    return result;
+}
 
 
 
 
+const result = calculate(inputArray);
+console.log(calculate(inputArray))
 
-// console.log(result(no1, no2, op))  
-// 
 
-  //      const opIndex = inputArray.findIndex((el) => typeof el === "string" && ["+", "-", "*", "/"].includes(el));
-  //      console.log("Erster Operator an Index:", opIndex);
-  //  });
