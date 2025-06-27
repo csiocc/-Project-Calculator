@@ -8,12 +8,12 @@ const resultbutton  = document.querySelector(".resultbutton");
 const resetbutton  = document.querySelector(".resetbutton");
 const buttonsList = document.querySelectorAll(".button")
 
-//button listener for all buttons except reset and result
-buttonsList.forEach((button) => {
+
+buttonsList.forEach((button) => {                   //button listener for all buttons except reset and result
     button.addEventListener("click", (event) => {
         const input = event.target.value;
-        //check for Number
-        if(!isNaN(input)){
+        
+        if(!isNaN(input)){                          //check for Number
             inputArray.push(Number(input));
         } else {
             inputArray.push(input);
@@ -24,22 +24,16 @@ buttonsList.forEach((button) => {
     })
 });
 
-resultbutton.addEventListener("click", () => {  // Start Calc
-        console.log("Result clicked")
-        calculate(inputArray)
-
-    });
-
-
 resetbutton.addEventListener("click", () => {         // Wipe all
     inputArray.length = 0;
+    document.querySelector(".output").innerText = inputArray.join("")
 
-    const outputtoreset = document.querySelector(".output");
-    outputtoreset.textContent = "";
 })
 
 
-function fixNumbers(inputArray) {           // Fixing Numbers 5 5 5 to 555
+
+
+function fixNumbers(inputArray) {                   // Fixing Numbers 5 5 5 to 555
     const result = [];
     let numberBuffer = [];
 
@@ -52,12 +46,12 @@ function fixNumbers(inputArray) {           // Fixing Numbers 5 5 5 to 555
                 result.push(number);
                 numberBuffer = [];
             }
-            result.push(item); // add Operator
+            result.push(item);                      // add Operator
         }
     }
 
-    // Push last Number
-    if (numberBuffer.length > 0) {
+    
+    if (numberBuffer.length > 0) {                  // Push last Number
         const number = parseInt(numberBuffer.join(""), 10);
         result.push(number);
     }
@@ -68,8 +62,8 @@ function fixNumbers(inputArray) {           // Fixing Numbers 5 5 5 to 555
 
 
 
-function calculate(inputArray) {
-    const fixedNumbers = fixNumbers(inputArray); // ← Ziffern zu Zahlen zusammensetzen
+function calculate(inputArray) {                        // Calculation
+    const fixedNumbers = fixNumbers(inputArray); 
 
     const firstPass = [];
 
@@ -98,22 +92,25 @@ function calculate(inputArray) {
     }
 
     let result = firstPass[0];
-    for (let j = 1; j < firstPass.length; j += 2) {
-        const op = firstPass[j];
-        const next = firstPass[j + 1];
+        for (let j = 1; j < firstPass.length; j += 2) {
+            const op = firstPass[j];
+            const next = firstPass[j + 1];
 
-        if (op === "+") result += next;
-        else if (op === "-") result -= next;
-    }
+            if (op === "+") result += next;
+            else if (op === "-") result -= next;
+        }
 
+    console.log("Result clicked")
     console.log("Ergebnis:", result);
     return result;
 }
 
 
+resultbutton.addEventListener("click", () => {          // Result
+        const outputResult = calculate(inputArray);
+        document.querySelector(".output").innerText = outputResult;
+});
 
 
-const result = calculate(inputArray);
-console.log(calculate(inputArray))
 
 
