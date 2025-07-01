@@ -125,7 +125,9 @@ function calculate(inputArray) {                                                
             }
 
             if (right === 0) {
+                alert("dont divide by 0")
                 throw new Error("dont divide by 0")
+                
             }
 
                 const result = current === "*" ? left * right : left / right;       // Muli and Div
