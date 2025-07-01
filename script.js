@@ -124,6 +124,10 @@ function calculate(inputArray) {                                                
                 throw new Error("ERROR");
             }
 
+            if (right === 0) {
+                throw new Error("dont divide by 0")
+            }
+
                 const result = current === "*" ? left * right : left / right;       // Muli and Div
                 firstPass.push(result);
                 i += 2;
@@ -177,5 +181,7 @@ resultbutton.addEventListener("click", () => {                                  
             : outputResult.toFixed(4);                                                          // If non Integer
             document.querySelector(".output").innerText = format;
         }
+
+        inputArray = [];
 });                                                        
    
