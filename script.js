@@ -7,9 +7,10 @@ let opIndex = 0;
 const resultbutton  = document.querySelector(".resultbutton");
 const resetbutton  = document.querySelector(".resetbutton");
 const buttonsList = document.querySelectorAll(".button")
+const backspace = document.querySelector(".backspace")
 
 
-buttonsList.forEach((button) => {                                                   //button listener for all buttons except reset and result
+buttonsList.forEach((button) => {                                                   //button listener for all buttons except reset and result dot and backspace
     button.addEventListener("click", (event) => {
         const input = event.target.value;
         
@@ -29,7 +30,12 @@ resetbutton.addEventListener("click", () => {                                   
 
 })
 
+backspace.addEventListener("click", () => {                                       // Delete last input
+    const ix = inputArray.length;
+    inputArray.pop();
+    document.querySelector(".output").innerText = inputArray.join("")
 
+})
 
 
 function fixNumbers(inputArray) {
@@ -67,9 +73,7 @@ function fixNumbers(inputArray) {
 }
 
 
-
-
-function calculate(inputArray) {                                                    // Clc
+function calculate(inputArray) {                                                    // Calc
     try {
         const fixedNumbers = fixNumbers(inputArray);                                // Numbers to fixed Numbers 5 5 -> 55
 
@@ -78,9 +82,9 @@ function calculate(inputArray) {                                                
         let i = 0;
         while (i < fixedNumbers.length) {
             const current = fixedNumbers[i];
-
+            const second = fixedNumbers[i +1]
             if (typeof current === "number") {
-                firstPass.push(current);
+                firstPass.push(current)
                 i++;
             } 
             else if (current === "%") {
@@ -88,11 +92,11 @@ function calculate(inputArray) {                                                
                 const right = fixedNumbers[i + 1];
 
                 if (typeof left !== "number") {
-                    throw new Error("ERROR%");
+                    throw new Error("ERROR")
                 }
 
                 if (typeof right === "number") {
-                    firstPass.push((left / 100) * right);                           // If 2 Numbers get % equal second Number from the First
+                    firstPass.push((left / 100) * right);                           // If 2 Numbers
                     i += 2;
                 } else {                       
                     firstPass.push(left / 100);
@@ -103,6 +107,12 @@ function calculate(inputArray) {                                                
                 const left = firstPass.pop()
                 const pi = 3.1415;
                 firstPass.push(left * pi)
+                i += 1;
+            }    
+            else if (current ==="*" && second === "pi") {
+                const left = firstPass.pop()
+                const pi = 3.1415;
+                firstPass.push(left * pi / pi)
                 i += 1;
             }
             else if (current === "*" || current === "/") {
@@ -140,7 +150,6 @@ function calculate(inputArray) {                                                
             if (typeof next !== "number") {
                 throw new Error("ERROR");
             }
-
             if (op === "+") result += next;
             else if (op === "-") result -= next;
             else throw new Error("ERROR");
@@ -170,4 +179,3 @@ resultbutton.addEventListener("click", () => {                                  
         }
 });                                                        
    
-
